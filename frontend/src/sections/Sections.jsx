@@ -41,7 +41,7 @@ function TiltPhoto() {
   const leave = () => { x.set(0); y.set(0); };
   return (
     <motion.div className="photo-wrap" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} onMouseMove={move} onMouseLeave={leave}>
-      <div className="photo-float">
+      <div className="photo-float" style={{ animation: "none", transform: "none" }}>
         <div className="photo-glow" />
         <div className="orbit">{techs.map((t, k) => (
           <span key={t.n} className="orb" style={{ "--a": (k * 360 / techs.length) + "deg" }} title={t.n}>
