@@ -17,9 +17,7 @@
   --border: rgba(0, 0, 0, 0.1);
 }
 
-/* ==============================
-   GLOBAL STYLES
-================================ */
+
 
 * {
   box-sizing: border-box;
@@ -50,9 +48,6 @@ section {
   padding: 90px 20px 20px;
 }
 
-/* ==============================
-   COMMON STYLES
-================================ */
 
 .grad {
   background: linear-gradient(90deg, var(--a), var(--b));
@@ -83,9 +78,6 @@ section {
   border-radius: 4px;
 }
 
-/* ==============================
-   PROGRESS BAR
-================================ */
 
 .progress {
   position: fixed;
@@ -98,23 +90,27 @@ section {
   z-index: 100;
 }
 
-/* ==============================
-   NAVBAR
-================================ */
 
 .nav {
   position: fixed;
-  top: 3px;
+  top: 0;
   left: 0;
-  right: 0;
-  z-index: 90;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  z-index: 9999;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+
+  padding: 10px 15px;
+
   backdrop-filter: blur(14px);
   background: color-mix(in srgb, var(--bg) 70%, transparent);
   border-bottom: 1px solid var(--border);
+
+  margin: 0;
 }
 
 .logo {
@@ -135,56 +131,56 @@ section {
   height: 60px;
   object-fit: contain;
   display: block;
-  transition: 0.3s ease;
-}
-
-.logo img:hover {
-  transform: scale(1.05);
-}
-
-.links {
-  display: flex;
-  gap: 22px;
-}
-
-.links a {
-  text-decoration: none;
-  text-transform: capitalize;
-  position: relative;
-  color: var(--muted);
-}
-
-.links a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  height: 2px;
-  width: 0;
-  background: var(--b);
-  transition: 0.3s;
-}
-
-.links a:hover::after {
-  width: 100%;
-}
-
-.links a:hover {
-  color: var(--text);
 }
 
 .nav-actions {
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .burger {
   display: none;
 }
 
-/* ==============================
-   ICON BUTTONS
-================================ */
+@media (max-width: 800px) {
+  .nav {
+    padding: 8px 12px;
+  }
+
+  .logo img {
+    width: 115px;
+    height: 50px;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .burger {
+    display: flex;
+  }
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
 
 .icon-btn,
 .top {
@@ -207,9 +203,7 @@ section {
   z-index: 80;
 }
 
-/* ==============================
-   HERO SECTION
-================================ */
+
 
 .hero {
   min-height: 100vh;
@@ -237,9 +231,6 @@ section {
   }
 }
 
-/* ==============================
-   BUTTONS
-================================ */
 
 .row {
   display: flex;
@@ -288,9 +279,6 @@ section {
   transform: none;
 }
 
-/* ==============================
-   SOCIAL LINKS
-================================ */
 
 .social a {
   font-size: 22px;
@@ -301,9 +289,6 @@ section {
   color: var(--b);
 }
 
-/* ==============================
-   PROFILE PHOTO
-================================ */
 
 .photo-wrap {
   --size: min(360px, 80vw);
@@ -361,9 +346,6 @@ section {
   }
 }
 
-/* ==============================
-   PHOTO ORBIT
-================================ */
 
 .orbit {
   position: absolute;
@@ -402,9 +384,6 @@ section {
   left: 10%;
 }
 
-/* ==============================
-   ORBITING TECH ICONS
-================================ */
 
 .orb {
   position: absolute;
@@ -437,9 +416,6 @@ section {
   animation-play-state: paused;
 }
 
-/* ==============================
-   GRID & CARDS
-================================ */
 
 .grid {
   display: grid;
@@ -465,10 +441,6 @@ section {
   box-shadow: 0 0 24px rgba(124, 58, 237, 0.3);
   transform: translateY(-4px);
 }
-
-/* ==============================
-   BADGES & PILLS
-================================ */
 
 .badges {
   display: flex;
@@ -500,10 +472,6 @@ section {
   border-color: var(--border);
 }
 
-/* ==============================
-   TIMELINE
-================================ */
-
 .timeline {
   border-left: 2px solid var(--border);
   padding-left: 28px;
@@ -525,10 +493,6 @@ section {
   box-shadow: 0 0 12px var(--b);
 }
 
-/* ==============================
-   CENTER CARD
-================================ */
-
 .center-card {
   text-align: center;
 }
@@ -536,10 +500,6 @@ section {
 .center-card .row {
   justify-content: center;
 }
-
-/* ==============================
-   FORMS
-================================ */
 
 form {
   display: flex;
@@ -574,10 +534,6 @@ p svg {
   vertical-align: -2px;
   margin-right: 6px;
 }
-
-/* ==============================
-   MODAL
-================================ */
 
 .modal {
   position: fixed;
@@ -618,10 +574,6 @@ p svg {
   border-radius: 8px;
 }
 
-/* ==============================
-   CENTER & ADMIN
-================================ */
-
 .center {
   min-height: 100vh;
   display: grid;
@@ -638,9 +590,6 @@ p svg {
   gap: 14px;
 }
 
-/* ==============================
-   EXPERIENCE
-================================ */
 
 .exp-head {
   display: flex;
@@ -671,9 +620,6 @@ p svg {
   line-height: 1.7;
 }
 
-/* ==============================
-   EDUCATION TIMELINE
-================================ */
 
 .edu {
   position: relative;
@@ -738,10 +684,6 @@ p svg {
   margin-top: 2px;
 }
 
-/* ==============================
-   MAP
-================================ */
-
 .map-card {
   margin-top: 20px;
 }
@@ -758,9 +700,6 @@ p svg {
   filter: grayscale(0.3);
 }
 
-/* ==============================
-   CONTACT DETAILS
-================================ */
 
 .contact-side {
   display: grid;
@@ -829,9 +768,6 @@ p svg {
   font-size: 15px;
 }
 
-/* ==============================
-   PROFESSIONAL FOCUS CARD
-================================ */
 
 .focus-list {
   display: flex;
@@ -878,10 +814,6 @@ p svg {
 .focus-item p b {
   color: var(--text);
 }
-
-/* ==============================
-   PROFESSIONAL SUMMARY CARD
-================================ */
 
 .summary-card {
   position: relative;
@@ -973,10 +905,6 @@ p svg {
   flex-shrink: 0;
 }
 
-/* ==============================
-   PREMIUM PORTFOLIO FOOTER
-================================ */
-
 .premium-footer {
   position: relative;
   overflow: hidden;
@@ -1021,8 +949,6 @@ p svg {
   margin: auto;
   position: relative;
 }
-
-/* FOOTER TOP CTA */
 
 .footer-top {
   display: flex;
@@ -1086,16 +1012,12 @@ p svg {
   box-shadow: 0 8px 25px rgba(124, 58, 237, 0.35);
 }
 
-/* FOOTER MAIN CONTENT */
-
 .footer-content {
   display: grid;
   grid-template-columns: 1.6fr 0.8fr 1.2fr;
   gap: 55px;
   padding: 10px 0 30px;
 }
-
-/* FOOTER BRAND */
 
 .footer-brand {
   display: flex;
@@ -1144,8 +1066,6 @@ p svg {
   margin: 16px 0;
 }
 
-/* FOOTER SOCIAL ICONS */
-
 .footer-social {
   display: flex;
   gap: 10px;
@@ -1173,8 +1093,6 @@ p svg {
   border-color: transparent;
 }
 
-/* FOOTER HEADINGS */
-
 .footer-navigation h3,
 .footer-contact-info h3 {
   font-size: 15px;
@@ -1182,8 +1100,6 @@ p svg {
   margin: 7px 0 20px;
   color: #fff;
 }
-
-/* FOOTER NAVIGATION */
 
 .footer-nav-list {
   display: grid;
@@ -1210,7 +1126,6 @@ p svg {
   transform: translateX(3px);
 }
 
-/* FOOTER CONTACT INFO */
 
 .footer-contact-info > a,
 .footer-location {
@@ -1236,7 +1151,7 @@ p svg {
   color: #22d3ee;
 }
 
-/* FOOTER BOTTOM */
+
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.09);
@@ -1264,11 +1179,6 @@ p svg {
   color: #f43f5e;
 }
 
-/* ==============================
-   RESPONSIVE DESIGN
-================================ */
-
-/* TABLET AND SMALL LAPTOP */
 
 @media (max-width: 900px) {
   .footer-content {
@@ -1414,60 +1324,43 @@ p svg {
   }
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0 35px;
+  border-radius: 10px;
+}
 
-/* FIX MOBILE NAVBAR ICON POSITION */
+.admin-table {
+  width: 100%;
+  min-width: 750px;
+  border-collapse: collapse;
+  background: var(--bg);
+  color: var(--text);
+}
 
-@media (max-width: 800px) {
+.admin-table th,
+.admin-table td {
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
 
-  .nav {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 15px;
-    position: fixed;
-    top: 3px;
-    left: 0;
-    right: 0;
-  }
+.admin-table th {
+  background: var(--b);
+  color: white;
+  white-space: nowrap;
+}
 
-  .logo {
-    flex-shrink: 0;
-  }
+.admin-table td {
+  color: var(--text);
+}
 
-  .logo img {
-    width: 115px;
-    height: 50px;
-    object-fit: contain;
-  }
+.admin-table tbody tr:hover {
+  background: color-mix(in srgb, var(--b) 8%, transparent);
+}
 
-  .nav-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    flex-shrink: 0;
-    margin-left: auto;
-  }
-
-  .icon-btn {
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .burger {
-    display: flex;
-  }
-
-  .links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    width: 100%;
-  }
+.admin-table td {
+  overflow-wrap: anywhere;
 }
