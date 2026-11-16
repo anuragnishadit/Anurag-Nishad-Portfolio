@@ -140,7 +140,7 @@ export default function Admin() {
               <th>S.No.</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Subject</th>
+              <th>Phone</th>
               <th>Message</th>
               <th>Action</th>
             </tr>
@@ -153,7 +153,7 @@ export default function Admin() {
                   <td>{index + 1}</td>
                   <td>{m.name}</td>
                   <td>{m.email}</td>
-                  <td>{m.subject}</td>
+                  <td>{m.phone}</td>
                   <td>{m.message}</td>
                   <td>
                     <button
