@@ -1,4 +1,3 @@
-
 :root {
   --bg: #070b1a;
   --card: rgba(255, 255, 255, 0.05);
@@ -393,9 +392,7 @@ body {
   height: 46px;
   margin: -23px 0 0 -23px;
   transform:
-    rotate(var(--a))
-    translateX(calc(var(--size) / 2 + 30px))
-    rotate(calc(var(--a) * -1));
+    rotate(var(--a)) translateX(calc(var(--size) / 2 + 30px)) rotate(calc(var(--a) * -1));
 }
 
 .orb-icon {
@@ -958,11 +955,9 @@ p svg {
   padding: 23px 28px;
   margin-bottom: 32px;
   border-radius: 15px;
-  background: linear-gradient(
-    110deg,
-    rgba(124, 58, 237, 0.15),
-    rgba(8, 145, 178, 0.1)
-  );
+  background: linear-gradient(110deg,
+      rgba(124, 58, 237, 0.15),
+      rgba(8, 145, 178, 0.1));
   border: 1px solid rgba(167, 139, 250, 0.2);
 }
 
@@ -1058,7 +1053,7 @@ p svg {
   font-weight: 700;
 }
 
-.footer-about > p {
+.footer-about>p {
   color: #929eb4;
   font-size: 13px;
   line-height: 1.8;
@@ -1127,7 +1122,7 @@ p svg {
 }
 
 
-.footer-contact-info > a,
+.footer-contact-info>a,
 .footer-location {
   display: flex;
   align-items: center;
@@ -1140,14 +1135,14 @@ p svg {
   overflow-wrap: anywhere;
 }
 
-.footer-contact-info > a svg,
+.footer-contact-info>a svg,
 .footer-location svg {
   flex-shrink: 0;
   font-size: 16px;
   color: #22d3ee;
 }
 
-.footer-contact-info > a:hover {
+.footer-contact-info>a:hover {
   color: #22d3ee;
 }
 
@@ -1190,7 +1185,7 @@ p svg {
     grid-column: 1 / -1;
   }
 
-  .footer-about > p {
+  .footer-about>p {
     max-width: 450px;
   }
 }
@@ -1315,6 +1310,7 @@ p svg {
 ================================ */
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -1363,4 +1359,189 @@ p svg {
 
 .admin-table td {
   overflow-wrap: anywhere;
+}
+
+
+/* =================================
+   FINAL NAVBAR FIX
+================================= */
+
+
+/* =================================
+   NAVBAR MAIN
+================================= */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 25px;
+  margin: 0;
+
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* LOGO */
+
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.logo img {
+  width: 175px;
+  height: 55px;
+  object-fit: contain;
+  display: block;
+}
+
+/* DESKTOP NAV LINKS */
+
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 18px;
+
+  margin-left: auto;
+  margin-right: 22px;
+}
+
+.links a {
+  display: inline-block;
+  color: var(--text);
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: var(--b);
+}
+
+/* NAV ACTIONS */
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-left: 0;
+  flex-shrink: 0;
+}
+
+.nav-actions .icon-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+/* DESKTOP: HIDE HAMBURGER */
+
+.nav-actions .burger {
+  display: none !important;
+}
+
+/* =================================
+   TABLET AND MOBILE
+================================= */
+
+@media (max-width: 900px) {
+
+  .nav {
+    padding: 8px 15px;
+  }
+
+  .logo img {
+    width: 130px;
+    height: 48px;
+  }
+
+  /* SHOW HAMBURGER */
+
+  .nav-actions .burger {
+    display: grid !important;
+  }
+
+  /* HIDE NAV LINKS BY DEFAULT */
+
+  .links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    display: none !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+    margin: 0;
+    padding: 22px 15px;
+
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  /* SHOW LINKS WHEN MENU IS OPEN */
+
+  .links.open {
+    display: flex !important;
+  }
+
+  .links a {
+    font-size: 16px;
+  }
+}
+
+/* =================================
+   SMALL MOBILE
+================================= */
+
+@media (max-width: 380px) {
+
+  .nav {
+    padding: 8px 10px;
+  }
+
+  .logo img {
+    width: 110px;
+    height: 45px;
+  }
+
+  .nav-actions {
+    gap: 6px;
+  }
+}
+
+/* =================================
+   PREVENT HORIZONTAL SCROLL
+================================= */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
