@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api.js";
-import "./Admin.css";
 
 export default function Admin() {
   const [token, setToken] = useState(
@@ -20,7 +19,7 @@ export default function Admin() {
   const [loginLoading, setLoginLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Fetch latest contact messages
+  // Load contact messages
   const load = useCallback(async () => {
     if (!token) return;
 
@@ -34,20 +33,12 @@ export default function Admin() {
       setLastUpdated(new Date());
     } catch (error) {
       setErr(error.message || "Failed to load messages");
-
-      if (
-        error.message?.toLowerCase().includes("unauthorized") ||
-        error.message?.toLowerCase().includes("token")
-      ) {
-        localStorage.removeItem("token");
-        setToken("");
-      }
     } finally {
       setLoading(false);
     }
   }, [token]);
 
-  // Load data when admin logs in
+  // Initial data load
   useEffect(() => {
     if (token) {
       load();
@@ -63,20 +54,24 @@ export default function Admin() {
     setErr("");
   };
 
-  // Admin login
+  // Login
   const doLogin = async (e) => {
     e.preventDefault();
     setErr("");
     setLoginLoading(true);
 
     try {
-      const { token: t } = await api("/auth/login", {
+      const response = await api("/auth/login", {
         method: "POST",
         body: login
       });
 
-      localStorage.setItem("token", t);
-      setToken(t);
+      if (!response.token) {
+        throw new Error("Login token not received");
+      }
+
+      localStorage.setItem("token", response.token);
+      setToken(response.token);
     } catch (error) {
       setErr(error.message || "Login failed");
     } finally {
@@ -84,11 +79,13 @@ export default function Admin() {
     }
   };
 
-  // Delete contact message
+  // Delete message
   const delMsg = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this message?")) {
-      return;
-    }
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this message?"
+    );
+
+    if (!confirmed) return;
 
     try {
       await api("/contact/" + id, {
@@ -96,8 +93,12 @@ export default function Admin() {
         token
       });
 
-      // Update only dashboard data
-      await load();
+      setMessages((previous) =>
+        previous.filter((message) => message._id !== id)
+      );
+
+      setLastUpdated(new Date());
+      setErr("");
     } catch (error) {
       setErr(error.message || "Unable to delete message");
     }
@@ -148,7 +149,7 @@ export default function Admin() {
     );
   }
 
-  // Dashboard
+  // Admin dashboard
   return (
     <div className="admin-dashboard">
 
@@ -189,7 +190,6 @@ export default function Admin() {
 
       {/* Statistics */}
       <div className="admin-stats">
-
         <div className="admin-stat-card">
           <div>
             <span>Total Messages</span>
@@ -207,18 +207,15 @@ export default function Admin() {
           </div>
           <div className="admin-stat-icon">✓</div>
         </div>
-
       </div>
 
-      {/* Messages */}
+      {/* Contact Messages */}
       <section className="admin-messages-section">
 
         <div className="admin-section-header">
           <div>
             <h3>Contact Messages</h3>
-            <p>
-              {messages.length} messages received
-            </p>
+            <p>{messages.length} messages received</p>
           </div>
 
           <span className="message-count">
@@ -279,7 +276,7 @@ export default function Admin() {
           </table>
         </div>
 
-        {/* Footer information */}
+        {/* Footer */}
         <div className="admin-table-footer">
           <span>
             {lastUpdated
@@ -297,7 +294,6 @@ export default function Admin() {
         </div>
 
       </section>
-
     </div>
   );
 }
