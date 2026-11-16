@@ -54,7 +54,7 @@ export default function Admin() {
     setErr("");
   };
 
-  // Login
+  // Admin login
   const doLogin = async (e) => {
     e.preventDefault();
     setErr("");
@@ -79,7 +79,7 @@ export default function Admin() {
     }
   };
 
-  // Delete message
+  // Delete contact message
   const delMsg = async (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this message?"
@@ -93,6 +93,7 @@ export default function Admin() {
         token
       });
 
+      // Update only messages, without reloading website
       setMessages((previous) =>
         previous.filter((message) => message._id !== id)
       );
@@ -104,7 +105,7 @@ export default function Admin() {
     }
   };
 
-  // Login screen
+  // Admin Login Screen
   if (!token) {
     return (
       <div className="admin-login-wrapper">
@@ -116,7 +117,10 @@ export default function Admin() {
             placeholder="Email Address"
             value={login.email}
             onChange={(e) =>
-              setLogin({ ...login, email: e.target.value })
+              setLogin({
+                ...login,
+                email: e.target.value
+              })
             }
             required
           />
@@ -126,7 +130,10 @@ export default function Admin() {
             placeholder="Password"
             value={login.password}
             onChange={(e) =>
-              setLogin({ ...login, password: e.target.value })
+              setLogin({
+                ...login,
+                password: e.target.value
+              })
             }
             required
           />
@@ -139,7 +146,9 @@ export default function Admin() {
             {loginLoading ? "Logging in..." : "Login"}
           </button>
 
-          {err && <p className="admin-error">{err}</p>}
+          {err && (
+            <p className="admin-error">{err}</p>
+          )}
 
           <Link to="/" className="admin-back-link">
             ← Back to Site
@@ -149,7 +158,7 @@ export default function Admin() {
     );
   }
 
-  // Admin dashboard
+  // Admin Dashboard
   return (
     <div className="admin-dashboard">
 
@@ -161,6 +170,7 @@ export default function Admin() {
         </div>
 
         <div className="admin-header-actions">
+
           <button
             className="admin-btn refresh-btn"
             onClick={load}
@@ -179,43 +189,56 @@ export default function Admin() {
           <Link to="/" className="admin-site-link">
             Site ↗
           </Link>
+
         </div>
       </div>
 
+      {/* Error Message */}
       {err && (
         <div className="admin-error">
           {err}
         </div>
       )}
 
-      {/* Statistics */}
+      {/* Statistics Cards */}
       <div className="admin-stats">
+
         <div className="admin-stat-card">
           <div>
             <span>Total Messages</span>
             <h3>{messages.length}</h3>
           </div>
-          <div className="admin-stat-icon">✉</div>
+
+          <div className="admin-stat-icon">
+            ✉
+          </div>
         </div>
 
         <div className="admin-stat-card">
           <div>
             <span>Dashboard Status</span>
+
             <h3 className="status-text">
               {loading ? "Updating..." : "Active"}
             </h3>
           </div>
-          <div className="admin-stat-icon">✓</div>
+
+          <div className="admin-stat-icon">
+            ✓
+          </div>
         </div>
+
       </div>
 
-      {/* Contact Messages */}
+      {/* Contact Messages Section */}
       <section className="admin-messages-section">
 
         <div className="admin-section-header">
           <div>
             <h3>Contact Messages</h3>
-            <p>{messages.length} messages received</p>
+            <p>
+              {messages.length} messages received
+            </p>
           </div>
 
           <span className="message-count">
@@ -223,8 +246,11 @@ export default function Admin() {
           </span>
         </div>
 
+        {/* Messages Table */}
         <div className="admin-table-container">
+
           <table className="admin-table">
+
             <thead>
               <tr>
                 <th>S.No.</th>
@@ -237,23 +263,33 @@ export default function Admin() {
             </thead>
 
             <tbody>
+
               {loading && messages.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="admin-empty">
+                  <td
+                    colSpan="6"
+                    className="admin-empty"
+                  >
                     Loading messages...
                   </td>
                 </tr>
               ) : messages.length > 0 ? (
+
                 messages.map((m, index) => (
                   <tr key={m._id}>
+
                     <td>{index + 1}</td>
+
                     <td>{m.name}</td>
+
                     <td>{m.email}</td>
+
                     <td>{m.phone || "N/A"}</td>
-                    <td>{m.subject || "N/A"}</td>
+
                     <td className="message-cell">
                       {m.message}
                     </td>
+
                     <td>
                       <button
                         className="admin-delete-btn"
@@ -262,21 +298,32 @@ export default function Admin() {
                         Delete
                       </button>
                     </td>
+
                   </tr>
                 ))
+
               ) : (
+
                 <tr>
-                  <td colSpan="7" className="admin-empty">
+                  <td
+                    colSpan="6"
+                    className="admin-empty"
+                  >
                     No contact messages found.
                   </td>
                 </tr>
+
               )}
+
             </tbody>
+
           </table>
+
         </div>
 
-        {/* Footer */}
+        {/* Dashboard Footer */}
         <div className="admin-table-footer">
+
           <span>
             {lastUpdated
               ? `Last updated: ${lastUpdated.toLocaleTimeString()}`
@@ -288,11 +335,15 @@ export default function Admin() {
             onClick={load}
             disabled={loading}
           >
-            {loading ? "Please wait..." : "Refresh Messages ↻"}
+            {loading
+              ? "Please wait..."
+              : "Refresh Messages ↻"}
           </button>
+
         </div>
 
       </section>
+
     </div>
   );
 }
