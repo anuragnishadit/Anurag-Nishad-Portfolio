@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api.js";
+import "./Admin.css";
 
 export default function Admin() {
   const [token, setToken] = useState(
@@ -12,33 +14,60 @@ export default function Admin() {
     password: ""
   });
 
-  const [err, setErr] = useState("");
   const [messages, setMessages] = useState([]);
-  const [projects, setProjects] = useState([]);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken("");
-  };
+  // Fetch latest contact messages
+  const load = useCallback(async () => {
+    if (!token) return;
 
-  const load = async (t = token) => {
+    setLoading(true);
+    setErr("");
+
     try {
-      setMessages(await api("/contact", { token: t }));
-      setProjects(await api("/projects"));
-    } catch (error) {
-      setErr(error.message);
-    }
-  };
+      const data = await api("/contact", { token });
 
-  useEffect(() => {
-    if (token) {
-      load(token);
+      setMessages(Array.isArray(data) ? data : []);
+      setLastUpdated(new Date());
+    } catch (error) {
+      setErr(error.message || "Failed to load messages");
+
+      if (
+        error.message?.toLowerCase().includes("unauthorized") ||
+        error.message?.toLowerCase().includes("token")
+      ) {
+        localStorage.removeItem("token");
+        setToken("");
+      }
+    } finally {
+      setLoading(false);
     }
   }, [token]);
 
+  // Load data when admin logs in
+  useEffect(() => {
+    if (token) {
+      load();
+    }
+  }, [token, load]);
+
+  // Logout
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setMessages([]);
+    setLastUpdated(null);
+    setErr("");
+  };
+
+  // Admin login
   const doLogin = async (e) => {
     e.preventDefault();
     setErr("");
+    setLoginLoading(true);
 
     try {
       const { token: t } = await api("/auth/login", {
@@ -49,12 +78,17 @@ export default function Admin() {
       localStorage.setItem("token", t);
       setToken(t);
     } catch (error) {
-      setErr(error.message);
+      setErr(error.message || "Login failed");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
+  // Delete contact message
   const delMsg = async (id) => {
-    if (!window.confirm("Delete this message?")) return;
+    if (!window.confirm("Are you sure you want to delete this message?")) {
+      return;
+    }
 
     try {
       await api("/contact/" + id, {
@@ -62,163 +96,208 @@ export default function Admin() {
         token
       });
 
-      load();
+      // Update only dashboard data
+      await load();
     } catch (error) {
-      setErr(error.message);
+      setErr(error.message || "Unable to delete message");
     }
   };
 
-  const delProj = async (id) => {
-    if (!window.confirm("Delete this project?")) return;
-
-    try {
-      await api("/projects/" + id, {
-        method: "DELETE",
-        token
-      });
-
-      load();
-    } catch (error) {
-      setErr(error.message);
-    }
-  };
-
+  // Login screen
   if (!token) {
     return (
-      <div className="center">
-        <form className="card" onSubmit={doLogin}>
+      <div className="admin-login-wrapper">
+        <form className="admin-login-card" onSubmit={doLogin}>
           <h2>Admin Login</h2>
 
           <input
-            placeholder="Email"
+            type="email"
+            placeholder="Email Address"
             value={login.email}
             onChange={(e) =>
               setLogin({ ...login, email: e.target.value })
             }
+            required
           />
 
           <input
-            placeholder="Password"
             type="password"
+            placeholder="Password"
             value={login.password}
             onChange={(e) =>
               setLogin({ ...login, password: e.target.value })
             }
+            required
           />
 
-          <button className="btn">Login</button>
+          <button
+            type="submit"
+            className="admin-btn"
+            disabled={loginLoading}
+          >
+            {loginLoading ? "Logging in..." : "Login"}
+          </button>
 
-          {err && <p className="err">{err}</p>}
+          {err && <p className="admin-error">{err}</p>}
 
-          <Link to="/">← Back to site</Link>
+          <Link to="/" className="admin-back-link">
+            ← Back to Site
+          </Link>
         </form>
       </div>
     );
   }
 
+  // Dashboard
   return (
-    <div className="admin">
-      <div className="row">
-        <h2>Admin Dashboard</h2>
+    <div className="admin-dashboard">
 
-        <button className="btn small" onClick={logout}>
-          Logout
-        </button>
+      {/* Header */}
+      <div className="admin-header">
+        <div>
+          <h2>Admin Dashboard</h2>
+          <p>Manage your portfolio messages</p>
+        </div>
 
-        <Link to="/">Site</Link>
+        <div className="admin-header-actions">
+          <button
+            className="admin-btn refresh-btn"
+            onClick={load}
+            disabled={loading}
+          >
+            {loading ? "Refreshing..." : "↻ Refresh Data"}
+          </button>
+
+          <button
+            className="admin-btn logout-btn"
+            onClick={logout}
+          >
+            Logout
+          </button>
+
+          <Link to="/" className="admin-site-link">
+            Site ↗
+          </Link>
+        </div>
       </div>
 
-      {err && <p className="err">{err}</p>}
+      {err && (
+        <div className="admin-error">
+          {err}
+        </div>
+      )}
 
-      {/* Messages Table */}
-      <h3>Contact Messages ({messages.length})</h3>
+      {/* Statistics */}
+      <div className="admin-stats">
 
-      <div className="table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>S.No.</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Message</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+        <div className="admin-stat-card">
+          <div>
+            <span>Total Messages</span>
+            <h3>{messages.length}</h3>
+          </div>
+          <div className="admin-stat-icon">✉</div>
+        </div>
 
-          <tbody>
-            {messages.length > 0 ? (
-              messages.map((m, index) => (
-                <tr key={m._id}>
-                  <td>{index + 1}</td>
-                  <td>{m.name}</td>
-                  <td>{m.email}</td>
-                  <td>{m.phone}</td>
-                  <td>{m.message}</td>
-                  <td>
-                    <button
-                      className="btn small"
-                      onClick={() => delMsg(m._id)}
-                    >
-                      Delete
-                    </button>
+        <div className="admin-stat-card">
+          <div>
+            <span>Dashboard Status</span>
+            <h3 className="status-text">
+              {loading ? "Updating..." : "Active"}
+            </h3>
+          </div>
+          <div className="admin-stat-icon">✓</div>
+        </div>
+
+      </div>
+
+      {/* Messages */}
+      <section className="admin-messages-section">
+
+        <div className="admin-section-header">
+          <div>
+            <h3>Contact Messages</h3>
+            <p>
+              {messages.length} messages received
+            </p>
+          </div>
+
+          <span className="message-count">
+            {messages.length}
+          </span>
+        </div>
+
+        <div className="admin-table-container">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>S.No.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading && messages.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="admin-empty">
+                    Loading messages...
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6">No messages found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Projects Table */}
-      <h3>Projects ({projects.length})</h3>
-
-      <div className="table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>S.No.</th>
-              <th>Project Name</th>
-              <th>Description</th>
-              <th>Technologies</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {projects.length > 0 ? (
-              projects.map((project, index) => (
-                <tr key={project._id}>
-                  <td>{index + 1}</td>
-                  <td>{project.title}</td>
-                  <td>{project.description}</td>
-                  <td>
-                    {Array.isArray(project.tech)
-                      ? project.tech.join(", ")
-                      : project.tech}
-                  </td>
-                  <td>
-                    <button
-                      className="btn small"
-                      onClick={() => delProj(project._id)}
-                    >
-                      Delete
-                    </button>
+              ) : messages.length > 0 ? (
+                messages.map((m, index) => (
+                  <tr key={m._id}>
+                    <td>{index + 1}</td>
+                    <td>{m.name}</td>
+                    <td>{m.email}</td>
+                    <td>{m.phone || "N/A"}</td>
+                    <td>{m.subject || "N/A"}</td>
+                    <td className="message-cell">
+                      {m.message}
+                    </td>
+                    <td>
+                      <button
+                        className="admin-delete-btn"
+                        onClick={() => delMsg(m._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="admin-empty">
+                    No contact messages found.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5">No projects found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer information */}
+        <div className="admin-table-footer">
+          <span>
+            {lastUpdated
+              ? `Last updated: ${lastUpdated.toLocaleTimeString()}`
+              : "Waiting for data..."}
+          </span>
+
+          <button
+            className="admin-text-refresh"
+            onClick={load}
+            disabled={loading}
+          >
+            {loading ? "Please wait..." : "Refresh Messages ↻"}
+          </button>
+        </div>
+
+      </section>
+
     </div>
   );
 }
