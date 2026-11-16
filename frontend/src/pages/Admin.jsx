@@ -231,7 +231,6 @@ export default function Admin() {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Subject</th>
                 <th>Message</th>
                 <th>Action</th>
               </tr>
